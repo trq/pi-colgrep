@@ -2,6 +2,8 @@
 
 A pi extension package that adds a dedicated `colgrep` tool for semantic/hybrid code search using [ColGrep](https://github.com/lightonai/next-plaid/tree/main/colgrep).
 
+Background reading: [LateOn-Code & ColGrep announcement](https://huggingface.co/blog/lightonai/colgrep-lateon-code).
+
 ## Features
 
 - Adds a dedicated `colgrep` tool (keeps a clearer mental model than overriding `grep`).
