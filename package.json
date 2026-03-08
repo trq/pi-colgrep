@@ -1,0 +1,49 @@
+{
+  "name": "@trq/pi-colgrep",
+  "version": "0.1.0",
+  "description": "pi extension that adds a colgrep tool and prioritizes semantic/hybrid ColGrep search",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "colgrep",
+    "grep",
+    "semantic-search"
+  ],
+  "license": "MIT AND Apache-2.0",
+  "author": "Tony Quilkey",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trq/pi-colgrep.git"
+  },
+  "bugs": {
+    "url": "https://github.com/trq/pi-colgrep/issues"
+  },
+  "homepage": "https://github.com/trq/pi-colgrep#readme",
+  "files": [
+    "extensions",
+    "skills",
+    "THIRD_PARTY_LICENSES",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/colgrep.ts"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@sinclair/typebox": "*"
+  },
+  "scripts": {
+    "build": "echo 'no build step'",
+    "check": "echo 'no check step'"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
