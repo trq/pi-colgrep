@@ -1,6 +1,6 @@
 {
   "name": "@trq/pi-colgrep",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "pi extension that adds a colgrep tool and prioritizes semantic/hybrid ColGrep search",
   "type": "module",
   "keywords": [
@@ -37,6 +37,7 @@
   },
   "peerDependencies": {
     "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
     "@sinclair/typebox": "*"
   },
   "scripts": {
