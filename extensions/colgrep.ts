@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
 const REINDEX_DEBOUNCE_MS = 4000;
+const STATUS_KEY = "colgrep";
 const WATCH_IGNORE = [".git", "node_modules", ".pi", ".idea", ".vscode", "dist", "build"];
 
 const colgrepSchema = Type.Object({
@@ -55,15 +56,19 @@ export default function colgrepExtension(pi: ExtensionAPI) {
 	let reindexTimer: ReturnType<typeof setTimeout> | null = null;
 	let reindexInFlight = false;
 	let pendingReindex = false;
+	let setFooterStatus: (text: string) => void = () => {};
+	let clearFooterStatus: () => void = () => {};
 
 	async function runReindex(cwd: string, reason: string) {
 		if (!colgrepAvailable) return;
 		if (reindexInFlight) {
 			pendingReindex = true;
+			setFooterStatus("indexing… (queued updates)");
 			return;
 		}
 
 		reindexInFlight = true;
+		setFooterStatus(`indexing… (${reason})`);
 		const result = await pi.exec("colgrep", ["init", "-y", "."], {
 			cwd,
 			timeout: 5 * 60 * 1000,
@@ -73,15 +78,21 @@ export default function colgrepExtension(pi: ExtensionAPI) {
 		if (pendingReindex) {
 			pendingReindex = false;
 			void runReindex(cwd, "pending");
+			return;
 		}
 
 		if (result.code !== 0) {
+			setFooterStatus("indexing failed");
 			console.error(`[colgrep-extension] reindex failed (${reason}): ${result.stderr || result.stdout}`);
+			return;
 		}
+
+		clearFooterStatus();
 	}
 
 	function scheduleReindex(cwd: string, reason: string) {
 		if (!colgrepAvailable) return;
+		setFooterStatus("index queued…");
 		if (reindexTimer) clearTimeout(reindexTimer);
 		reindexTimer = setTimeout(() => {
 			reindexTimer = null;
@@ -90,10 +101,14 @@ export default function colgrepExtension(pi: ExtensionAPI) {
 	}
 
 	pi.on("session_start", async (_event, ctx) => {
+		setFooterStatus = (text: string) => ctx.ui.setStatus(STATUS_KEY, `colgrep: ${text}`);
+		clearFooterStatus = () => ctx.ui.setStatus(STATUS_KEY, "");
+
 		const check = await pi.exec("colgrep", ["--version"], { cwd: ctx.cwd, timeout: 10_000 });
 		colgrepAvailable = check.code === 0;
 
 		if (!colgrepAvailable) {
+			clearFooterStatus();
 			ctx.ui.notify("colgrep not found in PATH. colgrep tool is inactive.", "warning");
 			return;
 		}
@@ -121,6 +136,7 @@ export default function colgrepExtension(pi: ExtensionAPI) {
 		reindexTimer = null;
 		if (watcher) watcher.close();
 		watcher = null;
+		clearFooterStatus();
 	});
 
 	pi.on("tool_result", async (event, ctx) => {
