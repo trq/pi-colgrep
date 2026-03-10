@@ -102,7 +102,7 @@ export default function colgrepExtension(pi: ExtensionAPI) {
 
 	pi.on("session_start", async (_event, ctx) => {
 		setFooterStatus = (text: string) => ctx.ui.setStatus(STATUS_KEY, `colgrep: ${text}`);
-		clearFooterStatus = () => ctx.ui.setStatus(STATUS_KEY, "");
+		clearFooterStatus = () => ctx.ui.setStatus(STATUS_KEY, undefined);
 
 		const check = await pi.exec("colgrep", ["--version"], { cwd: ctx.cwd, timeout: 10_000 });
 		colgrepAvailable = check.code === 0;

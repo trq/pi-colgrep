@@ -1,6 +1,6 @@
 {
   "name": "@trq/pi-colgrep",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "pi extension that adds a colgrep tool and prioritizes semantic/hybrid ColGrep search",
   "type": "module",
   "keywords": [
